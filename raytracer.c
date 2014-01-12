@@ -3,228 +3,34 @@
 #include <math.h>
 #include <string.h>
 
-#define WIDTH 640
-#define HEIGHT 480
-#define SCREEN_DISTANCE 1550.0
-
-#define square(x) ((x)*(x))
-#define min(x,y) ((x)<(y)?(x):(y))
-
-#define EPSILON 0.01
-
-typedef struct vector3 {
-    double x;
-    double y;
-    double z;
-} vector3;
-
-double vector_length(vector3 *v) {
-    return sqrt(square(v->x) + square(v->y) + square(v->z));
-}
-
-void normalise(vector3 *v) {
-    double length = vector_length(v);
-
-    v->x /= length;
-    v->y /= length;
-    v->z /= length;
-}
-
-
-vector3 *make_vect(double x, double y, double z) {
-    vector3 *v = (vector3*)malloc(sizeof(vector3));
-    v->x = x;
-    v->y = y;
-    v->z = z;
-    return v;
-}
-
-vector3 *make_normalised_vect(double x, double y, double z) {
-    vector3 *v = make_vect(x, y, z);
-    normalise(v);
-    return v;
-}
-
-double distance(vector3 *v1, vector3 *v2) {
-    return sqrt(square(v1->x - v2->x) + square(v1->y - v2->y) + square(v1->z - v2->z));
-}
-
-void scale(vector3 *v, double s) {
-    v->x *= s;
-    v->y *= s;
-    v->z *= s;
-}
-
-void shift(vector3 *v1, const vector3 *v2) {
-    v1->x += v2->x;
-    v1->y += v2->y;
-    v1->z += v2->z;
-}
-
-void invert(vector3 *v) {
-    v->x = -v->x;
-    v->y = -v->y;
-    v->z = -v->z;
-}
-
-void mix_vectors(vector3 *v1, const vector3 *v2, double t) {
-    v1->x += t * v2->x;
-    v1->y += t * v2->y;
-    v1->z += t * v2->z;
-}
-
-vector3 *copy_vector(vector3 *v) {
-    vector3 *new = (vector3*)malloc(sizeof(vector3));
-    memcpy(new, v, sizeof(vector3));
-    return new;
-}
-
-char *vector_to_string(vector3 *v) {
-    char *s = (char*)malloc(sizeof(char)*25);
-    sprintf(s, "<%.2f, %.2f, %.2f>", v->x, v->y, v->z);
-    return s;
-}
-
-void print_vector(vector3 *v) {
-    char *s = vector_to_string(v);
-    printf("%s\n", s);
-    free(s);
-}
-
-typedef struct colour {
-    char r;
-    char g;
-    char b;
-} colour;
-
-colour *make_colour(char r, char g, char b) {
-    colour *c = (colour*)malloc(sizeof(colour));
-    c->r = r;
-    c->g = g;
-    c->b = b;
-    return c;
-}
-
-typedef struct ray {
-    vector3 *org;
-    vector3 *dir;
-} ray;
-
-ray *make_ray(vector3 *org, vector3 *dir) {
-    ray *r = (ray*)malloc(sizeof(ray));
-    r->org = org;
-    r->dir = dir;
-    if (abs(vector_length(dir) - 1.0) > EPSILON) {
-        printf("Non-normalised vector as direction! Len: %.2f\n", vector_length(dir));
-        exit(-1);
-    }
-    return r;
-}
-
-void free_ray(ray *r) {
-    free(r->org);
-    free(r->dir);
-    free(r);
-}
-
-ray *copy_ray(const ray *r) {
-    ray *new = (ray*)malloc(sizeof(ray));
-    new->org = copy_vector(r->org);
-    new->dir = copy_vector(r->dir);
-    return new;
-}
-
-typedef struct sphere {
-    vector3 *pos;
-    double rad;
-} sphere;
-
-sphere *make_sphere(vector3 *pos, double rad) {
-    sphere *s = (sphere*)malloc(sizeof(sphere));
-    s->pos = pos;
-    s->rad = rad;
-    return s;
-}
-
-vector3 *intersect_sphere(const ray *r_org, const sphere *s) {
-    ray *r = copy_ray(r_org);
-
-    vector3 *transf_to_sphere_org = copy_vector(s->pos);
-    invert(transf_to_sphere_org);
-    
-    shift(r->org, transf_to_sphere_org);
-
-    free(transf_to_sphere_org);
-
-    double A = square(r->dir->x) + square(r->dir->y) + square(r->dir->z);
-    double B = 2 * (r->dir->x * r->org->x + r->dir->y * r->org->y + r->dir->z * r->org->z);
-    double C = square(r->org->x) + square(r->org->y) + square(r->org->z) - square(s->rad);
-
-    double discriminant = square(B) - 4 * A * C;
-
-    if (discriminant < 0.0) {
-        free_ray(r);
-        return NULL;
-    }
-    
-    double t0 = (-B - sqrt(discriminant)) / (2.0 * A);
-    double t1 = (B - sqrt(discriminant)) / (2.0 * A);
-
-    if (t0 < 0)
-        t0 = t1;
-
-    vector3 *intersect_point = copy_vector(r->org);
-    mix_vectors(intersect_point, r->dir, t0);
-
-    vector3 *transf_back_to_view_coords = copy_vector(s->pos);
-    
-
-    shift(intersect_point, transf_back_to_view_coords);
-
-    free(transf_back_to_view_coords);
-    free_ray(r);
-
-
-    return intersect_point;
-}
-
+#include "raytracer.h"
+#include "vector3.h"
+#include "ray.h"
+#include "sphere.h"
+#include "colour.h"
 
 colour *trace(ray *r, sphere **spheres, const int recursion_depth) {
     colour *c = make_colour(0,0,0);
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 1; i++) {
         vector3 *intersect = intersect_sphere(r, spheres[i]);
         if (intersect != NULL)
             c = make_colour(255,255,255);
     }
     return c;
 }
-void write_image(colour **image) {
-    FILE *f = fopen("image.ppm", "wb");
-    if (!f) {
-        printf("Unable to open file");
-        exit(-1);
-    }
-    fwrite("P6\n640 480\n255\n", sizeof(char), 15, f);
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
-            fwrite(&image[x*y]->r, sizeof(char), 1, f);
-            fwrite(&image[x*y]->g, sizeof(char), 1, f);
-            fwrite(&image[x*y]->b, sizeof(char), 1, f);
-        }
-    }
-}
+
 int main(int argc, char **argv) {
     sphere *spheres[] = {
-        make_sphere(make_vect(0, 0, -10-SCREEN_DISTANCE), 300),
-        make_sphere(make_vect(5, 5, -12-SCREEN_DISTANCE), 400)
+        //make_sphere(make_vect(0, 0, -10-SCREEN_DISTANCE), 300),
+        make_sphere(make_vect(0, 0, -50-SCREEN_DISTANCE), 40)
     };
 
     colour* image[WIDTH * HEIGHT];
 
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            ray *r = make_ray(make_vect(0, 0, 0), make_normalised_vect(x, y, -SCREEN_DISTANCE));
+            ray *r = make_ray(make_vect(0, 0, 0), make_normalised_vect(x-WIDTH/2, y-HEIGHT/2, -SCREEN_DISTANCE));
 
             image[x*y] = trace(r, spheres, 0);
 
@@ -234,4 +40,21 @@ int main(int argc, char **argv) {
     write_image(image);
 }
 
+void write_image(colour **image) {
+    char *head = "P6\n50 50\n255\n";
+    FILE *f = fopen("image.ppm", "wb");
+    if (!f) {
+        printf("Unable to open file");
+        exit(-1);
+    }
+    fwrite(head, sizeof(char), strlen(head), f);
+
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            fwrite(&image[x*y]->r, sizeof(char), 1, f);
+            fwrite(&image[x*y]->g, sizeof(char), 1, f);
+            fwrite(&image[x*y]->b, sizeof(char), 1, f);
+        }
+    }
+}
 
