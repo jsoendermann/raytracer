@@ -13,7 +13,7 @@
 
 
 
-colour *trace(ray *r, sphere **spheres, const int recursion_depth);
+colour *trace(ray *r, sphere **spheres, int num_spheres, const int recursion_depth);
 int main(int argc, char **argv);
 void write_image(colour **image);
 

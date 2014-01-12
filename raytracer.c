@@ -9,10 +9,10 @@
 #include "sphere.h"
 #include "colour.h"
 
-colour *trace(ray *r, sphere **spheres, const int recursion_depth) {
+colour *trace(ray *r, sphere **spheres, int num_spheres, const int recursion_depth) {
     colour *c = make_colour(0,0,0);
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < num_spheres; i++) {
         vector3 *intersect = intersect_sphere(r, spheres[i]);
         if (intersect != NULL)
             c = make_colour(255,255,255);
@@ -22,9 +22,11 @@ colour *trace(ray *r, sphere **spheres, const int recursion_depth) {
 
 int main(int argc, char **argv) {
     sphere *spheres[] = {
-        //make_sphere(make_vect(0, 0, -10-SCREEN_DISTANCE), 300),
+        //make_sphere(make_vect(0, 40, -10-SCREEN_DISTANCE), 20),
         make_sphere(make_vect(0, 0, -50-SCREEN_DISTANCE), 40)
     };
+
+    int num_spheres = sizeof(spheres)/sizeof(spheres[0]);
 
     colour* image[WIDTH * HEIGHT];
 
@@ -32,7 +34,7 @@ int main(int argc, char **argv) {
         for (int x = 0; x < WIDTH; x++) {
             ray *r = make_ray(make_vect(0, 0, 0), make_normalised_vect(x-WIDTH/2, y-HEIGHT/2, -SCREEN_DISTANCE));
 
-            image[x*y] = trace(r, spheres, 0);
+            image[x*y] = trace(r, spheres, num_spheres, 0);
 
             free_ray(r);
         }
