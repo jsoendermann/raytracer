@@ -10,32 +10,41 @@
 #include "sphere.h"
 #include "colour.h"
 
-colour *trace(ray *r, sphere **spheres, int num_spheres, const int recursion_depth) {
-    colour *c;
-
-    vector3 *closest_intersection_point = NULL;
-    sphere *intersected_sphere = NULL;
-    
+void find_closest_intersection_point(ray *r, sphere **spheres, int num_spheres, 
+        vector3 **closest_intersection_point, vector3 **surface_normal, sphere **intersected_sphere) {    
+    *closest_intersection_point = NULL;
     sphere *sphere;
     for (int i = 0; i < num_spheres; i++) {
         sphere = spheres[i];
         vector3 *sphere_intersection_point = intersect_sphere(r, sphere);
         if (sphere_intersection_point != NULL) {
-            if (closest_intersection_point == NULL || distance(r->org, closest_intersection_point) < distance(r->org, sphere_intersection_point)) {
-                closest_intersection_point = sphere_intersection_point;
-                intersected_sphere = sphere;
+            if (*closest_intersection_point == NULL || distance(r->org, *closest_intersection_point) < distance(r->org, sphere_intersection_point)) {
+                *closest_intersection_point = sphere_intersection_point;
+                *intersected_sphere = sphere;
             }
             else
                 free(sphere_intersection_point);
         }
     }
 
-    if (closest_intersection_point == NULL)
-        return make_colour(BG_COLOR_RED, BG_COLOR_GREEN, BG_COLOR_BLUE);
+    if ((*closest_intersection_point) == NULL) 
+        return;
 
-    vector3 *intersection_normal = make_difference_vector(closest_intersection_point, sphere->pos);
-    normalise(intersection_normal);
+    *surface_normal = make_difference_vector(*closest_intersection_point, (*intersected_sphere)->pos);
+    normalise(*surface_normal);
+    
+}
 
+colour *trace(ray *r, sphere **spheres, int num_spheres, const int recursion_depth) {
+    colour *c;
+
+    vector3 *closest_intersection_point, *surface_normal;
+    sphere *intersected_sphere;
+
+    find_closest_intersection_point(r, spheres, num_spheres, &closest_intersection_point, &surface_normal, &intersected_sphere);
+    
+
+    
     if (closest_intersection_point == NULL)
         c = make_colour(255, 255, 255);
      else 
