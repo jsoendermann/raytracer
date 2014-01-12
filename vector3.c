@@ -25,6 +25,11 @@ vector3 *copy_vector(vector3 *v) {
     return new;
 }
 
+vector3 *make_difference_vector(vector3 *v1, vector3 *v2) {
+    return make_vect(v1->x - v2->x, v1->y - v2->y, v1->z - v2->z);
+}
+
+
 void normalise(vector3 *v) {
     double length = vector_length(v);
 

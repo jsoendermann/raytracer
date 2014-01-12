@@ -13,17 +13,30 @@
 colour *trace(ray *r, sphere **spheres, int num_spheres, const int recursion_depth) {
     colour *c;
 
-    vector3 *min_distance = NULL;
-
+    vector3 *closest_intersection_point = NULL;
+    sphere *intersected_sphere = NULL;
+    
+    sphere *sphere;
     for (int i = 0; i < num_spheres; i++) {
-        vector3 *intersect = intersect_sphere(r, spheres[i]);
-        if (intersect != NULL) {
-            if (min_distance == NULL || distance(r->org, intersect) < distance(r->org, min_distance)) 
-                min_distance = intersect;
+        sphere = spheres[i];
+        vector3 *sphere_intersection_point = intersect_sphere(r, sphere);
+        if (sphere_intersection_point != NULL) {
+            if (closest_intersection_point == NULL || distance(r->org, closest_intersection_point) < distance(r->org, sphere_intersection_point)) {
+                closest_intersection_point = sphere_intersection_point;
+                intersected_sphere = sphere;
+            }
+            else
+                free(sphere_intersection_point);
         }
     }
 
-    if (min_distance == NULL)
+    if (closest_intersection_point == NULL)
+        return make_colour(BG_COLOR_RED, BG_COLOR_GREEN, BG_COLOR_BLUE);
+
+    vector3 *intersection_normal = make_difference_vector(closest_intersection_point, sphere->pos);
+    normalise(intersection_normal);
+
+    if (closest_intersection_point == NULL)
         c = make_colour(255, 255, 255);
      else 
         c = make_colour(0,0,0);
@@ -34,8 +47,8 @@ colour *trace(ray *r, sphere **spheres, int num_spheres, const int recursion_dep
 
 int main(int argc, char **argv) {
     sphere *spheres[] = {
-        make_sphere(make_vect(-10, -10, -75-SCREEN_DISTANCE), 30),
-        make_sphere(make_vect(20, 20, -100-SCREEN_DISTANCE), 40)
+        make_sphere(make_vect(-10, -10, -75-SCREEN_DISTANCE), 30, make_colour(255, 0, 0)),
+        make_sphere(make_vect(20, 20, -100-SCREEN_DISTANCE), 40, make_colour(0, 255, 0))
     };
 
     int num_spheres = sizeof(spheres)/sizeof(spheres[0]);
@@ -54,7 +67,7 @@ int main(int argc, char **argv) {
     }
 
     for (int i = 0; i < num_spheres; i++)
-        free(spheres[i]);
+        free_sphere(spheres[i]);
 
     write_image(image);
 }

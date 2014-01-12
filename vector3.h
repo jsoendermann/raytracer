@@ -14,6 +14,8 @@ vector3 *make_vect(double x, double y, double z);
 vector3 *make_normalised_vect(double x, double y, double z);
 vector3 *copy_vector(vector3 *v);
 
+vector3 *make_difference_vector(vector3 *v1, vector3 *v2);
+
 void normalise(vector3 *v);
 
 void scale(vector3 *v, double s);
