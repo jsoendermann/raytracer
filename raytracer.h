@@ -10,6 +10,8 @@
 #define HEIGHT 50
 #define SCREEN_DISTANCE 50.0
 
+#define coords2index(x,y) ((y)*WIDTH+(x))
+
 
 
 

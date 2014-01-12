@@ -1,12 +1,22 @@
 #ifndef COLOUR_H
 #define COLOUR_H
 
+#include <stdint.h>
+
+static int max_id = 0;
+
 typedef struct colour {
-    char r;
-    char g;
-    char b;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+
+    int id;
 } colour;
 
-colour *make_colour(char r, char g, char b);
+colour *make_colour(uint8_t r, uint8_t g, uint8_t b);
+
+char *colour_to_string(colour *c);
+void print_colour(colour *c);
+
 
 #endif
