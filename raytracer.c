@@ -5,7 +5,7 @@
 
 #define WIDTH 640
 #define HEIGHT 480
-#define SCREEN_DISTANCE 20.0
+#define SCREEN_DISTANCE 1550.0
 
 #define square(x) ((x)*(x))
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -92,12 +92,12 @@ void print_vector(vector3 *v) {
 }
 
 typedef struct colour {
-    float r;
-    float g;
-    float b;
+    char r;
+    char g;
+    char b;
 } colour;
 
-colour *make_colour(float r, float g, float b) {
+colour *make_colour(char r, char g, char b) {
     colour *c = (colour*)malloc(sizeof(colour));
     c->r = r;
     c->g = g;
@@ -189,15 +189,35 @@ vector3 *intersect_sphere(const ray *r_org, const sphere *s) {
 }
 
 
-colour *trace(ray *r, const int recursion_depth) {
+colour *trace(ray *r, sphere **spheres, const int recursion_depth) {
     colour *c = make_colour(0,0,0);
+
+    for (int i = 0; i < 2; i++) {
+        vector3 *intersect = intersect_sphere(r, spheres[i]);
+        if (intersect != NULL)
+            c = make_colour(255,255,255);
+    }
     return c;
 }
-
+void write_image(colour **image) {
+    FILE *f = fopen("image.ppm", "wb");
+    if (!f) {
+        printf("Unable to open file");
+        exit(-1);
+    }
+    fwrite("P6\n640 480\n255\n", sizeof(char), 15, f);
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            fwrite(&image[x*y]->r, sizeof(char), 1, f);
+            fwrite(&image[x*y]->g, sizeof(char), 1, f);
+            fwrite(&image[x*y]->b, sizeof(char), 1, f);
+        }
+    }
+}
 int main(int argc, char **argv) {
     sphere *spheres[] = {
-        make_sphere(make_vect(0, 0, -10), 3),
-        make_sphere(make_vect(5, 5, -12), 4)
+        make_sphere(make_vect(0, 0, -10-SCREEN_DISTANCE), 300),
+        make_sphere(make_vect(5, 5, -12-SCREEN_DISTANCE), 400)
     };
 
     colour* image[WIDTH * HEIGHT];
@@ -206,9 +226,12 @@ int main(int argc, char **argv) {
         for (int x = 0; x < WIDTH; x++) {
             ray *r = make_ray(make_vect(0, 0, 0), make_normalised_vect(x, y, -SCREEN_DISTANCE));
 
-            image[x*y] = trace(r, 0);
+            image[x*y] = trace(r, spheres, 0);
 
             free_ray(r);
         }
     }
+    write_image(image);
 }
+
+
