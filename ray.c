@@ -79,3 +79,21 @@ vector3 *intersect_sphere(const ray *r_org, const sphere *s) {
     return intersect_point;
 }
 
+char *ray_to_string(ray *r)  {
+    char *v1 = vector_to_string(r->org);
+    char *v2 = vector_to_string(r->dir);
+
+    char *s = (char*)malloc(sizeof(char)*70);
+    sprintf(s, "<org:%s dir:%s>", v1, v2);
+
+    free(v1);
+    free(v2);
+
+    return s;
+}
+
+void print_ray(ray *r) {
+    char *s = ray_to_string(r);
+    printf("%s\n", s);
+    free(s);
+}

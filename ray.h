@@ -15,5 +15,7 @@ void free_ray(ray *r);
 
 vector3 *intersect_sphere(const ray *r_org, const sphere *s);
 
+char *ray_to_string(ray *r);
+void print_ray(ray *r);
 
 #endif

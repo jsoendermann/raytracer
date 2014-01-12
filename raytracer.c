@@ -34,11 +34,17 @@ int main(int argc, char **argv) {
         for (int x = 0; x < WIDTH; x++) {
             ray *r = make_ray(make_vect(0, 0, 0), make_normalised_vect(x-WIDTH/2, y-HEIGHT/2, -SCREEN_DISTANCE));
 
+            print_ray(r);
+
             image[x*y] = trace(r, spheres, num_spheres, 0);
 
             free_ray(r);
         }
     }
+
+    for (int i = 0; i < num_spheres; i++)
+        free(spheres[i]);
+
     write_image(image);
 }
 
@@ -49,6 +55,7 @@ void write_image(colour **image) {
         printf("Unable to open file");
         exit(-1);
     }
+
     fwrite(head, sizeof(char), strlen(head), f);
 
     for (int y = 0; y < HEIGHT; y++) {
@@ -58,5 +65,7 @@ void write_image(colour **image) {
             fwrite(&image[x*y]->b, sizeof(char), 1, f);
         }
     }
+
+    fclose(f);
 }
 
