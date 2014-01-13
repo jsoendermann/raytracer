@@ -44,7 +44,8 @@ colour *trace(ray *r, sphere **spheres, int num_spheres, light **lights, int num
 
     vector3 *closest_intersection_point, *surface_normal;
     sphere *intersected_sphere;
-    find_closest_intersection_point(r, spheres, num_spheres, &closest_intersection_point, &surface_normal, &intersected_sphere);
+    find_closest_intersection_point(r, spheres, num_spheres, 
+            &closest_intersection_point, &surface_normal, &intersected_sphere);
     
     
     if (closest_intersection_point == NULL)
@@ -79,7 +80,10 @@ colour *trace(ray *r, sphere **spheres, int num_spheres, light **lights, int num
             }
 
 
-            free_ray(shadow_ray);
+            // FIXME this crashes
+            //free(shadow_ray->org);
+            //free(shadow_ray->dir);
+            //free_ray(shadow_ray);
         }
      }
 
@@ -95,8 +99,8 @@ int main(int argc, char **argv) {
     };
 
     light *lights[] = {
-        make_light(make_vect(0,0,-800))
-       // make_light(make_vect(200, 200, 100))
+        make_light(make_vect(0,0,-800)),
+        make_light(make_vect(-200, 100, -800))
     };
 
     int num_spheres = sizeof(spheres)/sizeof(spheres[0]);
@@ -121,6 +125,8 @@ int main(int argc, char **argv) {
             free_ray(r);
         }
     }
+
+    // free lights
 
     for (int i = 0; i < num_spheres; i++)
         free_sphere(spheres[i]);
