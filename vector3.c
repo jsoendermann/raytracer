@@ -71,6 +71,10 @@ double distance(vector3 *v1, vector3 *v2) {
     return sqrt(square(v1->x - v2->x) + square(v1->y - v2->y) + square(v1->z - v2->z));
 }
 
+double dot_product(vector3 *v1, vector3 *v2) {
+    return v1->x * v2->x + v1->y * v2->y + v1->z * v2->z;
+}
+
 char *vector_to_string(vector3 *v) {
     char *s = (char*)malloc(sizeof(char)*25);
     sprintf(s, "<%.2f, %.2f, %.2f>", v->x, v->y, v->z);

@@ -5,7 +5,11 @@
 #include "vector3.h"
 #include "colour.h"
 
+static int spheres_max_id = 0;
+
 typedef struct sphere {
+    int id;
+    
     vector3 *pos;
     double rad;
 

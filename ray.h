@@ -4,6 +4,11 @@
 #include "vector3.h"
 #include "sphere.h"
 
+// FIXME move this to separate file
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+
+
 typedef struct ray {
     vector3 *org;
     vector3 *dir;

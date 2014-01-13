@@ -36,9 +36,7 @@ vector3 *intersect_sphere(const ray *r_org, const sphere *s) {
 
     vector3 *transf_to_sphere_org = copy_vector(s->pos);
     invert(transf_to_sphere_org);
-    
     shift(r->org, transf_to_sphere_org);
-
     free(transf_to_sphere_org);
 
     double A = square(r->dir->x) + square(r->dir->y) + square(r->dir->z);
@@ -52,27 +50,22 @@ vector3 *intersect_sphere(const ray *r_org, const sphere *s) {
         return NULL;
     }
 
-    double q;
-    if (B < 0)
-        q = -0.5 * (B - sqrt(discriminant));
-    else
-        q = -0.5 * (B + sqrt(discriminant));
-    
-    double t0 = q / A;
-    double t1 = C / q;
+    double t0 = (-B - sqrt(discriminant)) / (2.0 * A);
+    double t1 = (B - sqrt(discriminant)) / (2.0 * A);
 
-    if (t0 < 0)
-        t0 = t1;
+    //printf("t0: %f, t1: %f\n", t0, t1);
 
-    vector3 *intersect_point = copy_vector(r->org);
+    if (t0 < 0 && t1 < 0) 
+        return NULL;
+    else if (t0 < 0 || t1 < 0)
+        t0 = max(t0, t1);
+    else //(t0 >= 0 && t1 >= 0)
+        t0 = min(t0, t1);
+
+
+    vector3 *intersect_point = copy_vector(r_org->org);
     mix_vectors(intersect_point, r->dir, t0);
 
-    vector3 *transf_back_to_view_coords = copy_vector(s->pos);
-    
-
-    shift(intersect_point, transf_back_to_view_coords);
-
-    free(transf_back_to_view_coords);
     free_ray(r);
 
 
