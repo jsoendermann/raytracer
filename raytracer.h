@@ -7,13 +7,13 @@
 #include "light.h"
 
 
-#define WIDTH 640
-#define HEIGHT 480
+#define WIDTH 800
+#define HEIGHT 800
 #define SCREEN_DISTANCE 50.0
 
-#define BG_COLOR_RED 200
-#define BG_COLOR_GREEN 255
-#define BG_COLOR_BLUE 255
+#define BG_COLOR_RED 0x0
+#define BG_COLOR_GREEN 0x0
+#define BG_COLOR_BLUE 0x50
 
 // FIXME find a better name for this
 #define SAME_SPHERE 1e-4

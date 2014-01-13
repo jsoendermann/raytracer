@@ -34,14 +34,17 @@ void free_ray(ray *r) {
 vector3 *intersect_sphere(const ray *r_org, const sphere *s) {
     ray *r = copy_ray(r_org);
 
+    //print_ray(r);
     vector3 *transf_to_sphere_org = copy_vector(s->pos);
     invert(transf_to_sphere_org);
     shift(r->org, transf_to_sphere_org);
     free(transf_to_sphere_org);
+    //print_ray(r);
+    //printf("\n");
 
-    double A = square(r->dir->x) + square(r->dir->y) + square(r->dir->z);
-    double B = 2 * (r->dir->x * r->org->x + r->dir->y * r->org->y + r->dir->z * r->org->z);
-    double C = square(r->org->x) + square(r->org->y) + square(r->org->z) - square(s->rad);
+    double A = dot_product(r->dir, r->dir);
+    double B = 2 * dot_product(r->dir, r->org);
+    double C = dot_product(r->org, r->org) - square(s->rad);
 
     double discriminant = square(B) - 4 * A * C;
 

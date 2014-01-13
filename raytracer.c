@@ -90,12 +90,12 @@ colour *trace(ray *r, sphere **spheres, int num_spheres, light **lights, int num
 
 int main(int argc, char **argv) {
     sphere *spheres[] = {
-        make_sphere(make_vect(-100, 20, 120), 110, make_colour(255, 0, 0)),
-        make_sphere(make_vect(40, -40, 100), 90, make_colour(0, 255, 0))
+        make_sphere(make_vect(-120, 20, -1000), 110, make_colour(255, 0, 0)),
+        make_sphere(make_vect(100, -40, -1000), 90, make_colour(0, 255, 0))
     };
 
     light *lights[] = {
-        make_light(make_vect(0,0,0))
+        make_light(make_vect(0,0,-800))
        // make_light(make_vect(200, 200, 100))
     };
 
@@ -104,10 +104,17 @@ int main(int argc, char **argv) {
 
     colour* image[WIDTH * HEIGHT];
 
+
+    // FIXME this looks strange when WIDTH != HEIGHT
+    double aspect_ratio = (double)WIDTH/HEIGHT;
+    double field_of_view = 30;
+    double a = tan((field_of_view/2.0) * (M_PI/180.0));
     ray *r;
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            r = make_ray(make_vect(0, 0, 0), make_normalised_vect(x-WIDTH/2, y-HEIGHT/2, SCREEN_DISTANCE));
+            r = make_ray(make_vect(0, 0, 0), make_normalised_vect((((double)x / WIDTH) * 2 - 1) * a * aspect_ratio, 
+                        ((((double)y / HEIGHT) * 2 - 1) * (-1)) * a, 
+                        -1));
 
             image[coords2index(x,y)] = trace(r, spheres, num_spheres, lights, num_lights, 0);
 
