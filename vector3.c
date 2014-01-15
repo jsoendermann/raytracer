@@ -5,7 +5,7 @@
 
 #include "vector3.h"
 
-vector3 *make_vect(double x, double y, double z) {
+vector3 *make_vector(double x, double y, double z) {
     vector3 *v = (vector3*)malloc(sizeof(vector3));
     v->x = x;
     v->y = y;
@@ -13,8 +13,8 @@ vector3 *make_vect(double x, double y, double z) {
     return v;
 }
 
-vector3 *make_normalised_vect(double x, double y, double z) {
-    vector3 *v = make_vect(x, y, z);
+vector3 *make_normalised_vector(double x, double y, double z) {
+    vector3 *v = make_vector(x, y, z);
     normalise(v);
     return v;
 }
@@ -26,7 +26,7 @@ vector3 *copy_vector(vector3 *v) {
 }
 
 vector3 *make_difference_vector(vector3 *v1, vector3 *v2) {
-    return make_vect(v1->x - v2->x, v1->y - v2->y, v1->z - v2->z);
+    return make_vector(v1->x - v2->x, v1->y - v2->y, v1->z - v2->z);
 }
 
 

@@ -10,8 +10,8 @@ typedef struct vector3 {
     double z;
 } vector3;
 
-vector3 *make_vect(double x, double y, double z);
-vector3 *make_normalised_vect(double x, double y, double z);
+vector3 *make_vector(double x, double y, double z);
+vector3 *make_normalised_vector(double x, double y, double z);
 vector3 *copy_vector(vector3 *v);
 
 vector3 *make_difference_vector(vector3 *v1, vector3 *v2);

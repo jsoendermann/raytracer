@@ -94,13 +94,13 @@ colour *trace(ray *r, sphere **spheres, int num_spheres, light **lights, int num
 
 int main(int argc, char **argv) {
     sphere *spheres[] = {
-        make_sphere(make_vect(-120, 20, -1000), 110, make_colour(255, 0, 0)),
-        make_sphere(make_vect(100, -40, -1000), 90, make_colour(0, 255, 0))
+        make_sphere(make_vector(-120, 20, -1000), 110, make_colour(255, 0, 0)),
+        make_sphere(make_vector(100, -40, -1000), 90, make_colour(0, 255, 0))
     };
 
     light *lights[] = {
-        make_light(make_vect(0,0,-800)),
-        make_light(make_vect(-200, 100, -800))
+        make_light(make_vector(0,0,-800)),
+        make_light(make_vector(-200, 100, -800))
     };
 
     int num_spheres = sizeof(spheres)/sizeof(spheres[0]);
@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
     ray *r;
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            r = make_ray(make_vect(0, 0, 0), make_normalised_vect((((double)x / WIDTH) * 2 - 1) * a * aspect_ratio, 
+            r = make_ray(make_vector(0, 0, 0), make_normalised_vector((((double)x / WIDTH) * 2 - 1) * a * aspect_ratio, 
                         ((((double)y / HEIGHT) * 2 - 1) * (-1)) * a, 
                         -1));
 
