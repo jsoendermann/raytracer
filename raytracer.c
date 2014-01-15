@@ -11,6 +11,9 @@
 #include "colour.h"
 #include "light.h"
 
+// This function finds the  intersection of r with any of the spheres closest to the origin of the ray.
+// It writes the result into closest_intersection_point. If the corresponding pointers don't point to NULL, it also
+// returns the surface normal and the sphere
 void find_closest_intersection_point(ray *r, sphere **spheres, int num_spheres,
         vector3 **closest_intersection_point, vector3 **surface_normal, sphere **intersected_sphere) {    
     *closest_intersection_point = NULL;
@@ -126,7 +129,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    // free lights
+    // TODO free lights
 
     for (int i = 0; i < num_spheres; i++)
         free_sphere(spheres[i]);

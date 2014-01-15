@@ -31,16 +31,16 @@ void free_ray(ray *r) {
     free(r);
 }
 
+// this function returns the intersection point of r_org and s
+// if there is one, NULL otherwise
 vector3 *intersect_sphere(const ray *r_org, const sphere *s) {
     ray *r = copy_ray(r_org);
 
-    //print_ray(r);
+    // transfer r to object space
     vector3 *transf_to_sphere_org = copy_vector(s->pos);
     invert(transf_to_sphere_org);
     shift(r->org, transf_to_sphere_org);
     free(transf_to_sphere_org);
-    //print_ray(r);
-    //printf("\n");
 
     double A = dot_product(r->dir, r->dir);
     double B = 2 * dot_product(r->dir, r->org);
@@ -56,7 +56,6 @@ vector3 *intersect_sphere(const ray *r_org, const sphere *s) {
     double t0 = (-B - sqrt(discriminant)) / (2.0 * A);
     double t1 = (B - sqrt(discriminant)) / (2.0 * A);
 
-    //printf("t0: %f, t1: %f\n", t0, t1);
 
     if (t0 < 0 && t1 < 0) 
         return NULL;
