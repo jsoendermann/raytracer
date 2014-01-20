@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
 
     light *lights[] = {
         make_light(make_vector(0,0,-800)),
-        make_light(make_vector(-200, 100, -800))
+//        make_light(make_vector(-200, 100, -800))
     };
 
     int num_spheres = sizeof(spheres)/sizeof(spheres[0]);
